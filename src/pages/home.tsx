@@ -5,6 +5,8 @@ import {
   FaCalendarPlus,
   FaCalendar,
   FaSignOutAlt,
+  FaGuitar,
+  FaUserPlus,
 } from "react-icons/fa";
 
 const Home = () => {
@@ -23,12 +25,20 @@ const Home = () => {
     router.push("/listEvents");
   };
 
+  const handleListInstruments = () => {
+    router.push("/listInstruments");
+  };
+
   const handleAddMusician = () => {
     router.push("/registerMusician");
   };
 
   const handleAddEvent = () => {
     router.push("/registerEvent");
+  };
+
+  const handleAddInstrument = () => {
+    router.push("/registerInstrument");
   };
 
   return (
@@ -44,7 +54,7 @@ const Home = () => {
       </div>
       <h1 className="text-4xl mb-6">Gerenciador de Músicos e Eventos</h1>
       <div className="flex space-x-4">
-        <div className="space-y-4">
+        <div className="space-y-4 justify-items-center">
           <button
             onClick={handleListMusicians}
             className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -59,13 +69,20 @@ const Home = () => {
             <FaCalendar className="mr-1" />
             Listar Eventos
           </button>
+          <button
+            onClick={handleListInstruments}
+            className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            <FaGuitar className="mr-1" />
+            Listar Instrumentos
+          </button>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 justify-items-center">
           <button
             onClick={handleAddMusician}
             className="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
           >
-            <FaPlus className="mr-1" />
+            <FaUserPlus className="mr-1" />
             Adicionar Músico
           </button>
           <button
@@ -74,6 +91,13 @@ const Home = () => {
           >
             <FaCalendarPlus className="mr-1" />
             Adicionar Evento
+          </button>
+          <button
+            onClick={handleAddInstrument}
+            className="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            <FaPlus className="mr-1" />
+            Adicionar Instrumento
           </button>
         </div>
       </div>

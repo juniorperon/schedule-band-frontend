@@ -8,7 +8,7 @@ const mockMusicians = [
   { id: 3, fullName: "Carlos Santos", instruments: ["Guitar", "Piano"] },
 ];
 
-const AddEvent = () => {
+const RegisterEvent = () => {
   const router = useRouter();
   const [date, setDate] = useState("");
   const [selectedMusicians, setSelectedMusicians] = useState<
@@ -120,4 +120,4 @@ const AddEvent = () => {
   );
 };
 
-export default AddEvent;
+export default RegisterEvent;
