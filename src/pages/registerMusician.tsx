@@ -50,7 +50,6 @@ export default function RegisterMusician() {
           email,
           instruments: instrumentIds,
         });
-        console.log("AQUI");
         alert("Músico atualizado com sucesso");
       } else {
         await axios.post("http://localhost:3333/musician", {

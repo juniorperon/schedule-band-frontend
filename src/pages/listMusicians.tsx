@@ -11,7 +11,6 @@ const ListMusicians = () => {
     const fetchMusicians = async () => {
       try {
         const response = await axios.get("http://localhost:3333/musician");
-        console.log(response.data);
         setMusicians(response.data);
       } catch (error) {
         console.error("Erro ao buscar músicos:", error);

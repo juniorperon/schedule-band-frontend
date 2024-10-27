@@ -4,6 +4,7 @@ import axios from "axios";
 
 const RegisterEvent = () => {
   const router = useRouter();
+  const { id } = router.query;
   const [date, setDate] = useState("");
   const [selectedMusician, setSelectedMusician] = useState<any>(null);
   const [musicians, setMusicians] = useState<
@@ -15,61 +16,93 @@ const RegisterEvent = () => {
   >([]);
   const [instruments, setInstruments] = useState<
     { id: number; name: string }[]
-  >([]); // Lista de instrumentos dinâmica
+  >([]);
   const [selectedInstrument, setSelectedInstrument] = useState<any>(null);
 
   useEffect(() => {
     const fetchMusicians = async () => {
       try {
         const response = await axios.get("http://localhost:3333/musician");
-        console.log(response.data);
         setMusicians(response.data);
       } catch (error) {
         console.error("Erro ao buscar músicos:", error);
         alert("Erro ao carregar músicos");
       }
     };
+
     fetchMusicians();
-  }, []);
+
+    if (id) {
+      const fetchEvent = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3333/events/${id}`
+          );
+          const event = response.data;
+
+          // Preenchendo os dados do evento
+          setDate(event.date);
+          setSelectedMusician(event.musician); // Supondo que musician é um objeto
+          setSelectedInstrument(event.instrument);
+        } catch (error) {
+          console.error("Erro ao buscar evento:", error);
+          alert("Erro ao carregar evento");
+        }
+      };
+
+      fetchEvent();
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (selectedMusician && musicians) {
+      const musician = musicians.filter((m) => m.id === selectedMusician.id);
+      console.log("MUSICO", musician[0].instruments);
+      setInstruments(musician[0].instruments);
+    }
+  }, [musicians, selectedMusician]);
 
   const handleMusicianChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const musicianId = Number(e.target.value);
     const musician = musicians.find((m) => m.id === musicianId);
     setSelectedMusician(musician || null);
+
     if (musician) {
       setInstruments(musician.instruments);
+      setSelectedInstrument(null); // Limpa o instrumento selecionado
     } else {
       setInstruments([]);
+      setSelectedInstrument(null); // Limpa o instrumento selecionado
     }
-    setSelectedInstrument("");
   };
 
   const handleInstrumentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const instrumentId = Number(e.target.value);
     const instrument = instruments.find((i) => i.id === instrumentId);
-    console.log("INSTRUMENT", instrument);
     setSelectedInstrument(instrument || null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedMusician && selectedInstrument) {
-      const newEvent = {
+      const eventData = {
         date,
         musicianId: selectedMusician.id,
         instrumentId: selectedInstrument.id,
       };
 
-      console.log("EVENTO", newEvent);
-
       try {
-        await axios.post("http://localhost:3333/events", newEvent).then(() => {
+        if (id) {
+          await axios.put(`http://localhost:3333/events/${id}`, eventData);
+          alert(`Evento atualizado com sucesso! Data: ${date}`);
+        } else {
+          await axios.post("http://localhost:3333/events", eventData);
           alert(`Evento adicionado com sucesso! Data: ${date}`);
-          router.push("/listEvents");
-        });
+        }
+        router.push("/listEvents");
       } catch (error) {
-        console.error("Erro ao adicionar evento:", error);
-        alert("Ocorreu um erro ao adicionar o evento. Tente novamente.");
+        console.error("Erro ao salvar evento:", error);
+        alert("Ocorreu um erro ao salvar o evento. Tente novamente.");
       }
     } else {
       alert("Por favor, selecione um músico e um instrumento.");
@@ -82,7 +115,9 @@ const RegisterEvent = () => {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded shadow-md w-full max-w-md"
       >
-        <h1 className="text-2xl mb-4">Adicionar Evento</h1>
+        <h1 className="text-2xl mb-4">
+          {id ? "Editar Evento" : "Adicionar Evento"}
+        </h1>
         <div className="mb-4">
           <label className="block mb-2">Data do Evento:</label>
           <input
@@ -97,6 +132,7 @@ const RegisterEvent = () => {
           <label className="block mb-2">Músicos:</label>
           <select
             onChange={handleMusicianChange}
+            value={selectedMusician?.id || ""}
             className="border border-gray-300 p-2 rounded w-full"
             required
           >
@@ -108,11 +144,12 @@ const RegisterEvent = () => {
             ))}
           </select>
         </div>
-        {instruments.length > 0 && (
+        {Array.isArray(instruments) && instruments.length > 0 && (
           <div className="mb-4">
             <label className="block mb-2">Escolha um Instrumento:</label>
             <select
               onChange={handleInstrumentChange}
+              value={selectedInstrument?.id || ""}
               className="border border-gray-300 p-2 rounded w-full"
               required
             >
@@ -128,7 +165,7 @@ const RegisterEvent = () => {
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={() => router.push("home")}
             className="mr-4 bg-gray-300 hover:bg-gray-400 text-black py-2 px-4 rounded"
           >
             Voltar
@@ -137,7 +174,7 @@ const RegisterEvent = () => {
             type="submit"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
-            Adicionar Evento
+            {id ? "Atualizar Evento" : "Adicionar Evento"}
           </button>
         </div>
       </form>

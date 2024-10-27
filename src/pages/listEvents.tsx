@@ -8,18 +8,17 @@ const ListEvents = () => {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    // Buscar os eventos do backend
     axios
       .get("http://localhost:3333/events")
-      .then((response) => setEvents(response.data))
+      .then((response) => {
+        setEvents(response.data);
+      })
       .catch((error) => console.error("Erro ao carregar eventos:", error));
   }, []);
 
   const handleDelete = async (id: number) => {
     try {
-      // Deletar evento no backend
       await axios.delete(`http://localhost:3333/events/${id}`);
-      // Atualizar a lista de eventos no frontend
       setEvents(events.filter((event) => event.id !== id));
     } catch (error) {
       console.error("Erro ao deletar evento:", error);
@@ -39,7 +38,8 @@ const ListEvents = () => {
           <thead>
             <tr>
               <th className="border border-gray-300 px-4 py-2">Data</th>
-              <th className="border border-gray-300 px-4 py-2">Músicos</th>
+              <th className="border border-gray-300 px-4 py-2">Músico</th>
+              <th className="border border-gray-300 px-4 py-2">Instrumento</th>
               <th className="border border-gray-300 px-4 py-2 text-center">
                 Ações
               </th>
@@ -52,11 +52,10 @@ const ListEvents = () => {
                   {event.date}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {event.musicians.map((musician) => (
-                    <div key={musician.fullName}>
-                      {musician.fullName} ({event.instrument})
-                    </div>
-                  ))}
+                  {event.musician.fullName}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {event.instrument.name}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-center">
                   <button
@@ -80,7 +79,7 @@ const ListEvents = () => {
         <h1>Sem eventos cadastrados</h1>
       )}
       <button
-        onClick={() => router.back()}
+        onClick={() => router.push("home")}
         className="mt-4 bg-gray-300 hover:bg-gray-400 text-black py-2 px-4 rounded"
       >
         Voltar
