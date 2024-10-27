@@ -11,7 +11,6 @@ export default function RegisterMusician() {
   const { id } = router.query;
 
   useEffect(() => {
-    // Carregar instrumentos disponíveis
     axios.get("http://localhost:3333/instruments").then((response) => {
       setAvailableInstruments(response.data);
     });
@@ -26,7 +25,6 @@ export default function RegisterMusician() {
     }
   }, [id]);
 
-  // Manipular a seleção de instrumentos
   const handleInstrumentChange = (instrument: any) => {
     const isSelected = selectedInstruments.some(
       (selected) => selected.id === instrument.id
@@ -41,26 +39,24 @@ export default function RegisterMusician() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const instrumentIds = selectedInstruments.map(
+      (instrument) => instrument.id
+    );
 
     try {
-      const instrumentNames = selectedInstruments.map(
-        (instrument) => instrument.name
-      );
-
       if (id) {
-        // Atualização
         await axios.put(`http://localhost:3333/musician/${id}`, {
           fullName,
           email,
-          instruments: instrumentNames,
+          instruments: instrumentIds,
         });
+        console.log("AQUI");
         alert("Músico atualizado com sucesso");
       } else {
-        // Criação
         await axios.post("http://localhost:3333/musician", {
           fullName,
           email,
-          instruments: instrumentNames,
+          instruments: instrumentIds,
         });
         alert("Músico criado com sucesso");
       }
@@ -130,7 +126,7 @@ export default function RegisterMusician() {
           <button
             disabled={selectedInstruments.length < 1}
             type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            className="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
           >
             {id ? "Atualizar Músico" : "Criar Músico"}
           </button>

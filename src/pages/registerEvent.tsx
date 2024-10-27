@@ -1,49 +1,76 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
-// Simulação de dados
-const mockMusicians = [
-  { id: 1, fullName: "João Silva", instruments: ["Guitar", "Drums"] },
-  { id: 2, fullName: "Maria Oliveira", instruments: ["Bass"] },
-  { id: 3, fullName: "Carlos Santos", instruments: ["Guitar", "Piano"] },
-];
+import axios from "axios";
 
 const RegisterEvent = () => {
   const router = useRouter();
   const [date, setDate] = useState("");
-  const [selectedMusicians, setSelectedMusicians] = useState<
-    { id: number; instrument: string }[]
+  const [selectedMusician, setSelectedMusician] = useState<any>(null);
+  const [musicians, setMusicians] = useState<
+    {
+      id: number;
+      fullName: string;
+      instruments: { id: number; name: string }[];
+    }[]
   >([]);
-  const [selectedMusician, setSelectedMusician] = useState<number | null>(null);
-  const [selectedInstrument, setSelectedInstrument] = useState<string>("");
+  const [instruments, setInstruments] = useState<
+    { id: number; name: string }[]
+  >([]); // Lista de instrumentos dinâmica
+  const [selectedInstrument, setSelectedInstrument] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchMusicians = async () => {
+      try {
+        const response = await axios.get("http://localhost:3333/musician");
+        console.log(response.data);
+        setMusicians(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar músicos:", error);
+        alert("Erro ao carregar músicos");
+      }
+    };
+    fetchMusicians();
+  }, []);
 
   const handleMusicianChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const musicianId = Number(e.target.value);
-    setSelectedMusician(musicianId);
-    setSelectedInstrument(""); // Resetar o instrumento selecionado
+    const musician = musicians.find((m) => m.id === musicianId);
+    setSelectedMusician(musician || null);
+    if (musician) {
+      setInstruments(musician.instruments);
+    } else {
+      setInstruments([]);
+    }
+    setSelectedInstrument("");
   };
 
   const handleInstrumentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const instrument = e.target.value;
-    setSelectedInstrument(instrument);
+    const instrumentId = Number(e.target.value);
+    const instrument = instruments.find((i) => i.id === instrumentId);
+    console.log("INSTRUMENT", instrument);
+    setSelectedInstrument(instrument || null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedMusician !== null && selectedInstrument) {
-      setSelectedMusicians((prev) => [
-        ...prev,
-        { id: selectedMusician, instrument: selectedInstrument },
-      ]);
-      alert(
-        `Evento adicionado com sucesso! Data: ${date}, Músicos: ${JSON.stringify(
-          selectedMusicians.concat({
-            id: selectedMusician,
-            instrument: selectedInstrument,
-          })
-        )}`
-      );
-      router.push("/list-events"); // Redirecionar para a listagem de eventos após adicionar
+    if (selectedMusician && selectedInstrument) {
+      const newEvent = {
+        date,
+        musicianId: selectedMusician.id,
+        instrumentId: selectedInstrument.id,
+      };
+
+      console.log("EVENTO", newEvent);
+
+      try {
+        await axios.post("http://localhost:3333/events", newEvent).then(() => {
+          alert(`Evento adicionado com sucesso! Data: ${date}`);
+          router.push("/listEvents");
+        });
+      } catch (error) {
+        console.error("Erro ao adicionar evento:", error);
+        alert("Ocorreu um erro ao adicionar o evento. Tente novamente.");
+      }
     } else {
       alert("Por favor, selecione um músico e um instrumento.");
     }
@@ -74,14 +101,14 @@ const RegisterEvent = () => {
             required
           >
             <option value="">Selecione um músico</option>
-            {mockMusicians.map((musician) => (
+            {musicians.map((musician) => (
               <option key={musician.id} value={musician.id}>
                 {musician.fullName}
               </option>
             ))}
           </select>
         </div>
-        {selectedMusician !== null && (
+        {instruments.length > 0 && (
           <div className="mb-4">
             <label className="block mb-2">Escolha um Instrumento:</label>
             <select
@@ -90,13 +117,11 @@ const RegisterEvent = () => {
               required
             >
               <option value="">Selecione um instrumento</option>
-              {mockMusicians
-                .find((musician) => musician.id === selectedMusician)
-                ?.instruments.map((instrument) => (
-                  <option key={instrument} value={instrument}>
-                    {instrument}
-                  </option>
-                ))}
+              {instruments.map((instrument) => (
+                <option key={instrument.id} value={instrument.id}>
+                  {instrument.name}
+                </option>
+              ))}
             </select>
           </div>
         )}

@@ -8,9 +8,17 @@ const ListMusicians = () => {
   const [musicians, setMusicians] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3333/musician")
-      .then((response) => setMusicians(response.data));
+    const fetchMusicians = async () => {
+      try {
+        const response = await axios.get("http://localhost:3333/musician");
+        console.log(response.data);
+        setMusicians(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar músicos:", error);
+        alert("Erro ao carregar músicos");
+      }
+    };
+    fetchMusicians();
   }, []);
 
   const handleDelete = async (id: number) => {
@@ -25,7 +33,6 @@ const ListMusicians = () => {
   };
 
   const handleEdit = (id: number) => {
-    console.log(id);
     router.push(`/registerMusician?id=${id}`);
   };
 
@@ -54,7 +61,9 @@ const ListMusicians = () => {
                   {musician.email}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {musician.instruments.join(", ")}
+                  {musician.instruments
+                    .map((instrument) => instrument.name)
+                    .join(", ")}
                 </td>
                 <td className="border border-gray-300 px-4 py-2 text-center">
                   <button
