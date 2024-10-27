@@ -40,9 +40,8 @@ const RegisterEvent = () => {
           );
           const event = response.data;
 
-          // Preenchendo os dados do evento
           setDate(event.date);
-          setSelectedMusician(event.musician); // Supondo que musician é um objeto
+          setSelectedMusician(event.musician);
           setSelectedInstrument(event.instrument);
         } catch (error) {
           console.error("Erro ao buscar evento:", error);
@@ -69,10 +68,10 @@ const RegisterEvent = () => {
 
     if (musician) {
       setInstruments(musician.instruments);
-      setSelectedInstrument(null); // Limpa o instrumento selecionado
+      setSelectedInstrument(null);
     } else {
       setInstruments([]);
-      setSelectedInstrument(null); // Limpa o instrumento selecionado
+      setSelectedInstrument(null);
     }
   };
 

@@ -1,4 +1,3 @@
-// pages/login.tsx
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
@@ -10,12 +9,12 @@ const Login = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Verifique as credenciais mockadas
+    // Adicionar login
     if (email === "admin@email.com" && password === "123") {
-      localStorage.setItem("token", "seu_token"); // Exemplo de armazenamento
-      router.push("/home"); // Redireciona para a página home
+      localStorage.setItem("token", "seu_token");
+      router.push("/home");
     } else {
-      alert("Credenciais inválidas!"); // Notifica em caso de erro
+      alert("Credenciais inválidas!");
     }
   };
 

@@ -1,4 +1,3 @@
-// pages/_app.tsx
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import "../app/styles/globals.css";
