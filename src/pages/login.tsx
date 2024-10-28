@@ -6,10 +6,12 @@ const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("LOGIN", email, password);
+    setErrorMessage("");
     try {
       const response = await axios.post("http://localhost:3333/auth/login", {
         method: "POST",
@@ -20,27 +22,24 @@ const Login = () => {
         password,
       });
 
-      console.log("RESPONSE", response);
       if (response.data) {
-        console.log("OK");
         const { token } = response.data;
         localStorage.setItem("token", token);
         router.push("/home");
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
-
-      // Aqui você pode verificar o status do erro para um tratamento específico
-      if (error.response) {
-        // A resposta do servidor é recebida e contém um erro
-        console.log("Erro do servidor:", error.response.data.message);
-        alert(error.response.data.message); // Exibe a mensagem de erro retornada
+      if (axios.isAxiosError(error)) {
+        // Verifica se é um erro do Axios
+        if (error.response) {
+          // O servidor respondeu com um código de status fora do intervalo de 2xx
+          setErrorMessage(error.response.data.message || "Erro desconhecido.");
+        } else {
+          // Ocorreu um erro ao configurar a requisição
+          setErrorMessage("Erro ao fazer a requisição.");
+        }
       } else {
-        // Qualquer outro erro (ex.: rede)
-        alert("Ocorreu um erro ao fazer login. Tente novamente.");
+        setErrorMessage("Erro ao fazer login. Verifique suas credenciais.");
       }
-
-      router.push("/login"); // Redireciona de volta para a tela de login
     }
   };
 
@@ -51,6 +50,9 @@ const Login = () => {
         className="bg-white p-6 rounded shadow-md w-full max-w-md"
       >
         <h1 className="text-2xl mb-4">Login</h1>
+        {errorMessage && (
+          <div className="mb-4 text-red-500">{errorMessage}</div> // Exibe a mensagem de erro
+        )}
         <div className="mb-4">
           <label className="block mb-2">Email:</label>
           <input
