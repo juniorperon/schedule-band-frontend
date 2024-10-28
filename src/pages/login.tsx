@@ -9,18 +9,38 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log("LOGIN", email, password);
     try {
-      // const response = await axios.post("http://localhost:3333/auth/login", {
-      //   email,
-      //   password,
-      // });
-      // const { token } = response.data;
-      // localStorage.setItem("token", token);
-      router.push("/home");
+      const response = await axios.post("http://localhost:3333/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        email,
+        password,
+      });
+
+      console.log("RESPONSE", response);
+      if (response.data) {
+        console.log("OK");
+        const { token } = response.data;
+        localStorage.setItem("token", token);
+        router.push("/home");
+      }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
-      alert("Ocorreu um erro ao fazer login. Verifique suas credenciais.");
+
+      // Aqui você pode verificar o status do erro para um tratamento específico
+      if (error.response) {
+        // A resposta do servidor é recebida e contém um erro
+        console.log("Erro do servidor:", error.response.data.message);
+        alert(error.response.data.message); // Exibe a mensagem de erro retornada
+      } else {
+        // Qualquer outro erro (ex.: rede)
+        alert("Ocorreu um erro ao fazer login. Tente novamente.");
+      }
+
+      router.push("/login"); // Redireciona de volta para a tela de login
     }
   };
 
