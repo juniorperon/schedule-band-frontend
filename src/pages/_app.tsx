@@ -5,14 +5,14 @@ import "../app/styles/globals.css";
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token && router.pathname !== "/login") {
-      router.push("/login");
-    } else if (token && router.pathname === "/login") {
-      router.push("/home");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token && router.pathname !== "/login") {
+  //     router.push("/login");
+  //   } else if (token && router.pathname === "/login") {
+  //     router.push("/home");
+  //   }
+  // }, [router]);
 
   return <Component {...pageProps} />;
 }
