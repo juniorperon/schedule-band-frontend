@@ -1,8 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Checklist
+
+- Crud Musicos
+- Crud Instrumentos
+- Crud Eventos
+- Cadastro User
+- Login com tratativa de erro de senha e email
+- Senha criptografada
+- autenticação token JWT(ainda não protegi as rotas)
+
 ## Getting Started
 
 First, run the development server:
+
+node 18
 
 ```bash
 npm run dev
