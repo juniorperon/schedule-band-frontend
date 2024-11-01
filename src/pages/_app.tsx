@@ -1,20 +1,15 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import "../app/styles/globals.css";
+// pages/_app.tsx
 
-function MyApp({ Component, pageProps }) {
-  const router = useRouter();
+import { AuthProvider } from '../shared/contexts/AuthContext';
+import '../app/styles/globals.css';
+import type { AppProps } from 'next/app';
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("token");
-  //   if (!token && router.pathname !== "/login") {
-  //     router.push("/login");
-  //   } else if (token && router.pathname === "/login") {
-  //     router.push("/home");
-  //   }
-  // }, [router]);
-
-  return <Component {...pageProps} />;
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <AuthProvider>
+      <Component {...pageProps} />
+    </AuthProvider>
+  );
 }
 
 export default MyApp;

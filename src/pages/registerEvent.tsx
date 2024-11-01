@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import api from "@/shared/services/api";
+import PrivateRoute from "@/components/PrivateRoute";
 
 const RegisterEvent = () => {
   const router = useRouter();
   const { id } = router.query;
+  const [title, setTitle] = useState("");
+  const [local, setLocal] = useState("");
   const [date, setDate] = useState("");
   const [selectedMusician, setSelectedMusician] = useState<any>(null);
   const [musicians, setMusicians] = useState<
@@ -22,7 +25,7 @@ const RegisterEvent = () => {
   useEffect(() => {
     const fetchMusicians = async () => {
       try {
-        const response = await axios.get("http://localhost:3333/musician");
+        const response = await api.get("/musician");
         setMusicians(response.data);
       } catch (error) {
         console.error("Erro ao buscar músicos:", error);
@@ -35,8 +38,8 @@ const RegisterEvent = () => {
     if (id) {
       const fetchEvent = async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:3333/events/${id}`
+          const response = await api.get(
+            `/events/${id}`
           );
           const event = response.data;
 
@@ -56,7 +59,6 @@ const RegisterEvent = () => {
   useEffect(() => {
     if (selectedMusician && musicians) {
       const musician = musicians.filter((m) => m.id === selectedMusician.id);
-      console.log("MUSICO", musician[0].instruments);
       setInstruments(musician[0].instruments);
     }
   }, [musicians, selectedMusician]);
@@ -92,10 +94,10 @@ const RegisterEvent = () => {
 
       try {
         if (id) {
-          await axios.put(`http://localhost:3333/events/${id}`, eventData);
+          await api.put(`/events/${id}`, eventData);
           alert(`Evento atualizado com sucesso! Data: ${date}`);
         } else {
-          await axios.post("http://localhost:3333/events", eventData);
+          await api.post("/events", eventData);
           alert(`Evento adicionado com sucesso! Data: ${date}`);
         }
         router.push("/listEvents");
@@ -109,6 +111,8 @@ const RegisterEvent = () => {
   };
 
   return (
+    <PrivateRoute>
+      
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit}
@@ -117,6 +121,26 @@ const RegisterEvent = () => {
         <h1 className="text-2xl mb-4">
           {id ? "Editar Evento" : "Adicionar Evento"}
         </h1>
+        <div className="mb-4">
+          <label className="block mb-2">Nome do Evento:</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="border border-gray-300 p-2 rounded w-full"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-2">Local do Evento:</label>
+          <input
+            type="text"
+            value={local}
+            onChange={(e) => setLocal(e.target.value)}
+            className="border border-gray-300 p-2 rounded w-full"
+            required
+          />
+        </div>
         <div className="mb-4">
           <label className="block mb-2">Data do Evento:</label>
           <input
@@ -178,6 +202,8 @@ const RegisterEvent = () => {
         </div>
       </form>
     </div>
+    </PrivateRoute>
+
   );
 };
 

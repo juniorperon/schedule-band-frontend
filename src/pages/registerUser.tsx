@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import api from "@/shared/services/api";
 
 const Register = () => {
   const router = useRouter();
@@ -17,7 +17,7 @@ const Register = () => {
     }
 
     try {
-      await axios.post("http://localhost:3333/auth/registerUser", {
+      await api.post("/auth/registerUser", {
         email,
         password,
       });

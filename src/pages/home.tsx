@@ -1,4 +1,7 @@
+import PrivateRoute from "@/components/PrivateRoute";
+import { useAuth } from "@/shared/contexts/AuthContext";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import {
   FaUser,
   FaPlus,
@@ -11,6 +14,14 @@ import {
 
 const Home = () => {
   const router = useRouter();
+
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login'); 
+    }
+  }, [isAuthenticated, router]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -42,6 +53,8 @@ const Home = () => {
   };
 
   return (
+    <PrivateRoute>
+
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 relative">
       <div className="absolute top-4 right-4">
         <button
@@ -102,6 +115,7 @@ const Home = () => {
         </div>
       </div>
     </div>
+    </PrivateRoute>
   );
 };
 
