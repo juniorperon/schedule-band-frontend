@@ -43,6 +43,8 @@ const RegisterEvent = () => {
           );
           const event = response.data;
 
+          setTitle(event.title);
+          setLocal(event.local);  
           setDate(event.date);
           setSelectedMusician(event.musician);
           setSelectedInstrument(event.instrument);
@@ -87,6 +89,8 @@ const RegisterEvent = () => {
     e.preventDefault();
     if (selectedMusician && selectedInstrument) {
       const eventData = {
+        title,
+        local,
         date,
         musicianId: selectedMusician.id,
         instrumentId: selectedInstrument.id,

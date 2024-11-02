@@ -12,6 +12,7 @@ const ListEvents = () => {
     api
       .get("/events")
       .then((response) => {
+        console.log(response.data);
         setEvents(response.data);
       })
       .catch((error) => console.error("Erro ao carregar eventos:", error));
