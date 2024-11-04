@@ -25,7 +25,7 @@ const Home = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    router.push("/login");
+    router.push("/login").then(() => router.reload());
   };
 
   const handleListMusicians = () => {
