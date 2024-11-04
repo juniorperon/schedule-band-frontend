@@ -3,11 +3,23 @@ import { useRouter } from "next/router";
 import api from "@/shared/services/api";
 import PrivateRoute from "@/components/PrivateRoute";
 
+interface Musician {
+  id: number;
+  fullName: string;
+  email: string;
+  instruments: Instrument[];
+}
+
+interface Instrument {
+  id: number;
+  name: string;
+}
+
 const RegisterMusician = () => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [selectedInstruments, setSelectedInstruments] = useState<any[]>([]);
-  const [availableInstruments, setAvailableInstruments] = useState([]);
+  const [fullName, setFullName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [selectedInstruments, setSelectedInstruments] = useState<Instrument[]>([]);
+  const [availableInstruments, setAvailableInstruments] = useState<Instrument[]>([]);
   const router = useRouter();
   const { id } = router.query;
 
@@ -26,7 +38,7 @@ const RegisterMusician = () => {
       if (id) {
         try {
           const response = await api.get(`/musician/${id}`);
-          const musician = response.data;
+          const musician: Musician = response.data;
           setFullName(musician.fullName);
           setEmail(musician.email);
           setSelectedInstruments(musician.instruments);
@@ -41,7 +53,7 @@ const RegisterMusician = () => {
     fetchMusician();
   }, [id]);
 
-  const handleInstrumentChange = (instrument: any) => {
+  const handleInstrumentChange = (instrument: Instrument) => {
     setSelectedInstruments((prevSelected) =>
       prevSelected.some((selected) => selected.id === instrument.id)
         ? prevSelected.filter((selected) => selected.id !== instrument.id)
@@ -49,8 +61,8 @@ const RegisterMusician = () => {
     );
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const instrumentIds = selectedInstruments.map(
       (instrument) => instrument.id
     );
@@ -65,9 +77,9 @@ const RegisterMusician = () => {
         alert("Músico criado com sucesso");
       }
       router.push("/listMusicians");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar músico:", error);
-      alert("Erro ao salvar músico");
+      alert("Erro ao salvar músico: " + (error.response?.data?.message || "Erro desconhecido"));
     }
   };
 
@@ -104,7 +116,7 @@ const RegisterMusician = () => {
           <div className="mb-4">
             <label className="block text-sm font-medium">Instrumentos:</label>
             <div className="grid grid-cols-3 gap-2">
-              {availableInstruments.map((instrument: any) => (
+              {availableInstruments.map((instrument) => (
                 <div key={instrument.id} className="flex items-center">
                   <input
                     type="checkbox"
