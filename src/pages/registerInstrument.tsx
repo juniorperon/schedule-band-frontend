@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import api from "@/shared/services/api";
+import PrivateRoute from "@/components/PrivateRoute";
 
 export default function RegisterInstrument() {
   const [name, setName] = useState("");
@@ -9,7 +10,7 @@ export default function RegisterInstrument() {
 
   useEffect(() => {
     if (id) {
-      axios.get(`http://localhost:3333/instruments/${id}`).then((response) => {
+      api.get(`/instruments/${id}`).then((response) => {
         setName(response.data.name);
       });
     }
@@ -19,10 +20,10 @@ export default function RegisterInstrument() {
     e.preventDefault();
     try {
       if (id) {
-        await axios.put(`http://localhost:3333/instruments/${id}`, { name });
+        await api.put(`/instruments/${id}`, { name });
         alert("Instrumento atualizado com sucesso");
       } else {
-        await axios.post("http://localhost:3333/instruments", { name });
+        await api.post("/instruments", { name });
         alert("Instrumento criado com sucesso");
       }
       router.push("/listInstruments");
@@ -37,6 +38,8 @@ export default function RegisterInstrument() {
   };
 
   return (
+    <PrivateRoute>
+
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <h1 className="text-4xl mb-4">
         {id ? "Editar Instrumento" : "Criar Instrumento"}
@@ -71,5 +74,7 @@ export default function RegisterInstrument() {
         </div>
       </form>
     </div>
+    </PrivateRoute>
+
   );
 }

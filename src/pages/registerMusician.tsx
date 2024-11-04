@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
+import api from "@/shared/services/api";
+import PrivateRoute from "@/components/PrivateRoute";
 
 export default function RegisterMusician() {
   const [fullName, setFullName] = useState("");
@@ -11,12 +12,12 @@ export default function RegisterMusician() {
   const { id } = router.query;
 
   useEffect(() => {
-    axios.get("http://localhost:3333/instruments").then((response) => {
+    api.get("/instruments").then((response) => {
       setAvailableInstruments(response.data);
     });
 
     if (id) {
-      axios.get(`http://localhost:3333/musician/${id}`).then((response) => {
+      api.get(`/musician/${id}`).then((response) => {
         const musician = response.data;
         setFullName(musician.fullName);
         setEmail(musician.email);
@@ -45,14 +46,14 @@ export default function RegisterMusician() {
 
     try {
       if (id) {
-        await axios.put(`http://localhost:3333/musician/${id}`, {
+        await api.put(`/musician/${id}`, {
           fullName,
           email,
           instruments: instrumentIds,
         });
         alert("Músico atualizado com sucesso");
       } else {
-        await axios.post("http://localhost:3333/musician", {
+        await api.post("/musician", {
           fullName,
           email,
           instruments: instrumentIds,
@@ -71,6 +72,8 @@ export default function RegisterMusician() {
   };
 
   return (
+    <PrivateRoute>
+
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <h1 className="text-4xl mb-4">{id ? "Editar Músico" : "Criar Músico"}</h1>
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md">
@@ -132,5 +135,7 @@ export default function RegisterMusician() {
         </div>
       </form>
     </div>
+    </PrivateRoute>
+
   );
 }
