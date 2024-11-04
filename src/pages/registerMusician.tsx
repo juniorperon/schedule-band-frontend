@@ -77,9 +77,21 @@ const RegisterMusician = () => {
         alert("Músico criado com sucesso");
       }
       router.push("/listMusicians");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao salvar músico:", error);
-      alert("Erro ao salvar músico: " + (error.response?.data?.message || "Erro desconhecido"));
+      
+      let errorMessage = "Erro desconhecido"; 
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "object" && error !== null) {
+        const errorResponse = (error as any).response;
+        if (errorResponse && errorResponse.data && errorResponse.data.message) {
+          errorMessage = errorResponse.data.message; 
+        }
+      }
+  
+      alert("Erro ao salvar músico: " + errorMessage);
     }
   };
 
