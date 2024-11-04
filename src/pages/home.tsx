@@ -12,10 +12,14 @@ import {
   FaUserPlus,
 } from "react-icons/fa";
 
+interface AuthContextType {
+  isAuthenticated: boolean;
+}
+
 const Home = () => {
   const router = useRouter();
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth() as AuthContextType;
 
   useEffect(() => {
     if (!isAuthenticated) {

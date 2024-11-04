@@ -17,10 +17,7 @@ const Register = () => {
     }
 
     try {
-      await api.post("/auth/signUp", {
-        email,
-        password,
-      });
+      await api.post("/auth/signUp", { email, password });
       alert("Conta criada com sucesso! Você já pode fazer login.");
       router.push("/login");
     } catch (error) {
@@ -37,8 +34,9 @@ const Register = () => {
       >
         <h1 className="text-2xl mb-4">Criar Conta</h1>
         <div className="mb-4">
-          <label className="block mb-2">Email:</label>
+          <label className="block mb-2" htmlFor="email">Email:</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -47,8 +45,9 @@ const Register = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2">Senha:</label>
+          <label className="block mb-2" htmlFor="password">Senha:</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -57,8 +56,9 @@ const Register = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2">Confirmar Senha:</label>
+          <label className="block mb-2" htmlFor="confirm-password">Confirmar Senha:</label>
           <input
+            id="confirm-password"
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
